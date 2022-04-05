@@ -1,9 +1,13 @@
+import os
+
 from flask import render_template, flash, redirect, url_for, request
+from flask import send_from_directory
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
+from werkzeug.utils import secure_filename
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, ImageForm
 from app.models import User
 
 
@@ -11,7 +15,6 @@ from app.models import User
 @app.route('/index')
 @login_required
 def index():
-    user = {'username': 'Polina'}
     posts = [
         {
             'author': {'username': 'John'},
@@ -70,3 +73,41 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html', title='Register', form=form)
+
+
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = [
+        {'author': user, 'body': 'Test post #1'},
+        {'author': user, 'body': 'Test post #2'}
+    ]
+
+    form = ImageForm()
+    return render_template('user.html', user=user, posts=posts, form=form)
+
+
+@app.route('/upload/<username>', methods=['GET', 'POST'])
+@login_required
+def upload(username):
+    form = ImageForm()
+
+    if form.validate_on_submit():
+        f = form.image.data
+        filename = secure_filename(f.filename)
+        f.save(os.path.join(app.config['AVATAR_UPLOAD_DIR'], filename))
+        user = User.query.filter_by(username=username).first()
+        user.image = filename
+        db.session.commit()
+
+        return redirect(url_for('user', username=username))
+
+    return render_template('user.html', form=form)
+
+
+@app.route('/avatars/<filename>')
+@login_required
+def avatars(filename):
+    return send_from_directory(app.config['AVATAR_UPLOAD_DIR'], filename)
+

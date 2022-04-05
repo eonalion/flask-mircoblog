@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table>
+        <tr valign="top">
+            <td>
+                <img src="{{ url_for('avatars', filename=user.image) if user.image else user.default_avatar() }}" height="128" width="128">
+                <form action="{{ url_for('upload', username=user.username) }}" method="POST" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    {{ form.image }}<br>
+                    {{ form.submit }}<br>
+                </form>
+            </td>
+            <td><h1>User: {{ user.username }}</h1></td>
+        </tr>
+    </table>
+    <hr>
+    {% for post in posts %}
+    <table>
+        <tr align="top">
+            <td><img src="{{ url_for('avatars', filename=user.image) if user.image else user.default_avatar() }}" height="36" width="36"></td>
+            <td>{{ post.author.username }} says:<br>{{ post.body }}</td>
+        </tr>
+    </table>
+    {% endfor %}
+{% endblock %}
