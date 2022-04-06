@@ -7,7 +7,7 @@ from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, ImageForm
+from app.forms import LoginForm, RegistrationForm, ImageForm, EditProfileForm
 from app.models import User
 
 from datetime import datetime
@@ -86,8 +86,26 @@ def user(username):
         {'author': user, 'body': 'Test post #2'}
     ]
 
-    form = ImageForm()
-    return render_template('user.html', user=user, posts=posts, form=form)
+    return render_template('user.html', user=user, posts=posts)
+
+
+@app.route('/edit', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    image_form = ImageForm()
+
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.about_me = form.about_me.data
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('edit_profile', title='Edit Profile', form=form, image_form=image_form))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.about_me.data = current_user.about_me
+
+    return render_template('edit_profile.html', title='Edit Profile', form=form, image_form=image_form)
 
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -101,7 +119,7 @@ def upload():
         current_user.image = filename
         db.session.commit()
 
-    return redirect(url_for('user', username=current_user.username))
+    return redirect(url_for('edit_profile'))
 
 
 @app.route('/avatars/<filename>')
