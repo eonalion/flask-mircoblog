@@ -10,6 +10,8 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, ImageForm
 from app.models import User
 
+from datetime import datetime
+
 
 @app.route('/')
 @app.route('/index')
@@ -88,22 +90,18 @@ def user(username):
     return render_template('user.html', user=user, posts=posts, form=form)
 
 
-@app.route('/upload/<username>', methods=['GET', 'POST'])
+@app.route('/upload', methods=['GET', 'POST'])
 @login_required
-def upload(username):
+def upload():
     form = ImageForm()
-
     if form.validate_on_submit():
         f = form.image.data
         filename = secure_filename(f.filename)
         f.save(os.path.join(app.config['AVATAR_UPLOAD_DIR'], filename))
-        user = User.query.filter_by(username=username).first()
-        user.image = filename
+        current_user.image = filename
         db.session.commit()
 
-        return redirect(url_for('user', username=username))
-
-    return render_template('user.html', form=form)
+    return redirect(url_for('user', username=current_user.username))
 
 
 @app.route('/avatars/<filename>')
@@ -111,3 +109,9 @@ def upload(username):
 def avatars(filename):
     return send_from_directory(app.config['AVATAR_UPLOAD_DIR'], filename)
 
+
+@app.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()
