@@ -2,6 +2,7 @@
 
 {% block content %}
 
+{% if form %}
 <div class="jumbotron jumbotron-fluid" style="padding: 2rem 2rem">
     <div class="container">
         <h1 class="display-4">Hi, {{ current_user.username }}!</h1>
@@ -31,14 +32,20 @@
     </div>
 </div>
 
+{% else %}
+
+<div class="jumbotron jumbotron-fluid" style="padding: 2rem 2rem">
+    <div class="container">
+        <h1 class="display-4">Our Community</h1>
+        <p class="lead">Discover what people from all around the world are thinking about</p>
+    </div>
+</div>
+
 <br>
 
 <div class="row">
     <div class="col-12">
         <nav class="navbar navbar-light">
-            <span class="navbar-text">
-                What other people saying
-            </span>
             <form class="form-inline ml-auto">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
@@ -48,41 +55,10 @@
 </div>
 
 <hr class="mt-1">
+{% endif %}
 
 {% for post in posts %}
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card border-0">
-            <div class="row no-gutters w-75">
-                <div class="col-md-1 align-items-center d-flex">
-                    <div class="embed-responsive embed-responsive-1by1">
-                        <div class="embed-responsive-item">
-                            <img class="img-fluid" src="{{ url_for('avatars', filename=post.author.image) if post.author.image
-                            else post.author.default_avatar() }}">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body" >
-                        <small class="text-muted">{{ post.timestamp }}</small>
-                        <h5 class="card-title"><a href="{{ url_for('user', username=post.author.username) }}" class="link text-decoration-none">{{ post.author.username }}</a> says:</h5>
-                    </div>
-                </div>
-            </div>
-            <div class="row no-gutters">
-                <div class="col-md-8">
-                    <div class="card-body">
-                        {% if post.title %}
-                        <h6 class="card-title">{{ post.title }}</h6>
-                        {% endif %}
-                        <p>{{ post.body }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<hr class="mt-4">
+    {% include '_post.html' %}
 {% endfor%}
+
 {% endblock %}

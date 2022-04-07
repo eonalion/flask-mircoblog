@@ -1,0 +1,33 @@
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0">
+            <div class="row no-gutters w-75">
+                <div class="col-md-1 align-items-center d-flex">
+                    <div class="embed-responsive embed-responsive-1by1 text-center">
+                        <div class="embed-responsive-item ">
+                            <img class="img-fluid" src="{{ url_for('avatars', filename=post.author.image) if post.author.image
+                            else post.author.default_avatar() }}"></div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <small class="text-muted">{{ post.timestamp }}</small>
+                        <h5 class="card-title"><a href="{{ url_for('user', username=post.author.username) }}" class="link text-decoration-none">{{ post.author.username }}</a> says:</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-md-8">
+                    <div class="card-body">
+                        {% if post.title %}
+                        <h6 class="card-title">{{ post.title }}</h6>
+                        {% endif %}
+                        <p>{{ post.body }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="mt-4">

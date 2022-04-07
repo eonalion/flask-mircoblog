@@ -160,6 +160,13 @@ def unfollow(username):
         return redirect(url_for('index'))
 
 
+@app.route('/explore')
+@login_required
+def explore():
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template('index.html', title='Explore', posts=posts)
+
+
 @app.route('/avatars/<filename>')
 @login_required
 def avatars(filename):
