@@ -54,3 +54,10 @@ class EditProfileForm(FlaskForm):
 
 class FollowForm(FlaskForm):
     submit = SubmitField('Submit')
+
+
+class PostForm(FlaskForm):
+    title = StringField('You can add a title to your post', validators=[Length(min=0, max=64)])
+    body = TextAreaField('Write something interesting', validators=[
+        DataRequired(), Length(min=1, max=140)])
+    submit = SubmitField('Submit')

@@ -5,24 +5,48 @@
 <div class="jumbotron jumbotron-fluid" style="padding: 2rem 2rem">
     <div class="container">
         <h1 class="display-4">Hi, {{ current_user.username }}!</h1>
-        <p class="lead">Check out posts from people you follow</p>
+        <p class="lead">Any thoughts to share with the world?</p>
         <br>
-        <p class="lead">
-            <a class="btn btn-info btn" href="#">Write new post</a>
-        </p>
+            <form action="" method="post">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <small class="text-muted">{{ form.title.label }}</small>
+                    {{ form.title(size=64, class="form-control") }}
+                </div>
+                <div class="form-group">
+                    <small class="text-muted">{{ form.body.label }}</small>
+                    {{ form.body(class="form-control", cols=26, rows=4) }}
+                    {% for error in form.body.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    <label for="post" class="btn btn-info">Write new post</label>
+                    {{ form.submit(id="post", style="display:none") }}
+                </div>
+            </form>
+
     </div>
 </div>
 
-<div class="row mt-4">
+<br>
 
+<div class="row">
     <div class="col-12">
         <nav class="navbar navbar-light">
-            <div class="navbar-nav ml-auto">
-                    <a class="nav-item nav-link" href="#">Show latest</a>
-            </div>
+            <span class="navbar-text">
+                What other people saying
+            </span>
+            <form class="form-inline ml-auto">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+            </form>
         </nav>
     </div>
 </div>
+
 <hr class="mt-1">
 
 {% for post in posts %}

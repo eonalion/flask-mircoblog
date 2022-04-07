@@ -46,14 +46,17 @@
     </div>
 </div>
 
-<hr class="mt-4">
+<br>
+
+<hr class="mt-1">
+<br>
 
 {% for post in posts %}
 <div class="row mt-4">
     <div class="col-12">
         <div class="card border-0">
             <div class="row no-gutters w-75">
-                <div class="col-md-1">
+                <div class="col-md-1 align-items-center d-flex">
                     <div class="embed-responsive embed-responsive-1by1 text-center">
                         <div class="embed-responsive-item "><img class="img-fluid" src="{{ url_for('avatars', filename=user.image) if user.image
                         else user.default_avatar() }}"></div>

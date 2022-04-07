@@ -7,19 +7,27 @@ from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, ImageForm, EditProfileForm, FollowForm
-from app.models import User
+from app.forms import LoginForm, RegistrationForm, ImageForm, EditProfileForm, FollowForm, PostForm
+from app.models import User, Post
 
 from datetime import datetime
 
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
     posts = current_user.subscription_posts().all()
+    form = PostForm()
 
-    return render_template('index.html', title='Home', posts=posts)
+    if form.validate_on_submit():
+        post = Post(title=form.title.data, body=form.body.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post is now live!')
+        return redirect(url_for('index'))
+
+    return render_template('index.html', title='Home', posts=posts, form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
