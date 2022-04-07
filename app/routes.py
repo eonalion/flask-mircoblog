@@ -20,11 +20,13 @@ def index():
     posts = [
         {
             'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
+            'body': 'Beautiful day in Portland! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ut accumsan eros, venenatis luctus urna. Nam pretium nunc nisi, sit amet consectetur lorem facilisis in. Nunc ligula ipsum, ornare et eleifend at, rhoncus eget libero. Etiam tempor massa sed odio sodales cursus. Proin ultrices mauris convallis, dignissim purus vitae, posuere quam.',
+            'timestamp': '12 Aug 18:30'
         },
         {
             'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
+            'body': 'The Avengers movie was so cool!',
+            'timestamp': '29 March 21:00'
         }
     ]
 
@@ -89,7 +91,7 @@ def user(username):
     return render_template('user.html', user=user, posts=posts)
 
 
-@app.route('/edit', methods=['GET', 'POST'])
+@app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
     form = EditProfileForm()

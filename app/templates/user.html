@@ -1,63 +1,63 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-7">
-                <div class="card border-0">
-                    <div class="row no-gutters">
-                        <div class="col-md-4">
-                            <img class="card-img" src="{{ url_for('avatars', filename=current_user.image) if current_user.image
-                            else current_user.default_avatar() }}" >
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h1 class="card-title">{{ user.username }}</h1>
-                                {% if user.about_me %}<p class="card-text">{{ user.about_me }}</p>{% endif %}
-                                {% if user.last_seen %}<p class="card-text"><small class="text-muted">Last seen on: {{ user.last_seen }}</small></p>{% endif %}
-                                {% if user == current_user %}
-                                <a class="btn btn-info" href="{{ url_for('edit_profile') }}" role="button">Edit your profile</a>
-                                {% endif %}
-                            </div>
-                        </div>
+<div class="row">
+    <div class="col-7">
+        <div class="card border-0">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img class="card-img" src="{{ url_for('avatars', filename=current_user.image) if current_user.image
+                    else current_user.default_avatar() }}" >
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h1 class="card-title">{{ user.username }}</h1>
+                        {% if user.about_me %}<p class="card-text">{{ user.about_me }}</p>{% endif %}
+                        {% if user.last_seen %}<p class="card-text"><small class="text-muted">Last seen on: {{ user.last_seen }}</small></p>{% endif %}
+                        {% if user == current_user %}
+                        <br>
+                        <a class="btn btn-info btn-sm" href="{{ url_for('edit_profile') }}" role="button">Edit your profile</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-
-        <hr class="mt-4">
-
-        {% for post in posts %}
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card border-0">
-                    <div class="row no-gutters w-75">
-                        <div class="col-md-1">
-                            <div class="embed-responsive embed-responsive-1by1 text-center">
-                                <div class="embed-responsive-item bg-primary"><img class="img-fluid" src="{{ url_for('avatars', filename=current_user.image) if current_user.image
-                                else current_user.default_avatar() }}"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h5 class="card-title"><a href="#" class="link text-decoration-none">{{ post.author.username }}</a> says:</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row no-gutters">
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <p>{{ post.body }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <hr class="mt-4">
-        {% endfor %}
     </div>
+</div>
+
+<hr class="mt-4">
+
+{% for post in posts %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0">
+            <div class="row no-gutters w-75">
+                <div class="col-md-1">
+                    <div class="embed-responsive embed-responsive-1by1 text-center">
+                        <div class="embed-responsive-item "><img class="img-fluid" src="{{ url_for('avatars', filename=current_user.image) if current_user.image
+                        else current_user.default_avatar() }}"></div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <small class="font-weight-light">{{ post.timestamp }}</small>
+                        <h5 class="card-title"><a href="#" class="link text-decoration-none">{{ post.author.username }}</a> says:</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <p>{{ post.body }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="mt-4">
+{% endfor %}
 
 
 {% endblock %}

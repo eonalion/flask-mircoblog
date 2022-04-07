@@ -1,8 +1,61 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hi, {{ current_user.username }}!</h1>
-    {% for post in posts %}
-    <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
-    {% endfor %}
+
+<div class="jumbotron jumbotron-fluid" style="padding: 2rem 2rem">
+    <div class="container">
+        <h1 class="display-4">Hi, {{ current_user.username }}!</h1>
+        <p class="lead">Check out posts from people you follow</p>
+        <br>
+        <p class="lead">
+            <a class="btn btn-info btn-lg" href="#">Write new post</a>
+        </p>
+    </div>
+</div>
+
+<div class="row mt-4">
+
+    <div class="col-12">
+        <nav class="navbar navbar-light">
+            <div class="navbar-nav ml-auto">
+                    <a class="nav-item nav-link" href="#">Show latest</a>
+            </div>
+        </nav>
+    </div>
+</div>
+<hr class="mt-1">
+
+{% for post in posts %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0">
+            <div class="row no-gutters w-75">
+                <div class="col-md-1 align-items-center d-flex">
+                    <div class="embed-responsive embed-responsive-1by1">
+                        <div class="embed-responsive-item">
+                            <img class="img-fluid" src="{{ url_for('avatars', filename=current_user.image) if current_user.image
+                            else current_user.default_avatar() }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body" >
+                        <small class="font-weight-light">{{ post.timestamp }}</small>
+                        <h5 class="card-title"><a href="#" class="link text-decoration-none">{{ post.author.username }}</a> says:</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <p>{{ post.body }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="mt-4">
+{% endfor%}
 {% endblock %}

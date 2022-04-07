@@ -10,27 +10,43 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
     </head>
     <body>
-        <div>Microblog:
-            <a href="{{ url_for('index') }}">Home</a>
-            {% if current_user.is_anonymous %}
-            <a href="{{ url_for('register') }}">Register</a>
-            <a href="{{ url_for('login') }}">Login</a>
-            {% else %}
-            <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
-            {% endif %}
-        </div>
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+                <a class="navbar-brand" href="{{ url_for('index') }}">Microblog</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <a class="nav-item nav-link" href="{{ url_for('index') }}">Home</a>
+                        {% if current_user.is_authenticated %}
+                        <a class="nav-item nav-link" href="{{ url_for('user', username=current_user.username) }}">Profile</a>
+                        {% endif %}
+                    </div>
+                    <div class="navbar-nav ml-auto">
+                        {% if current_user.is_anonymous %}
+                        <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
+                        <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
+                        {% else %}
+                        <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+                        {% endif %}
+                    </div>
+              </div>
+            </nav>
 
-        <hr class="mb-4 mt-4">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
+
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
             {% for message in messages %}
-            <li>{{ message }}</li>
+                <div class="alert alert-warning" role="alert">
+                    {{ message }}
+                </div>
             {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
+            {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
     </body>
 </html>
