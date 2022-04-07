@@ -44,12 +44,15 @@ class User(UserMixin, db.Model):
         return f'https://www.gravatar.com/avatar/{digest}?d=identicon'
 
     def follow(self, user):
-        if user not in self.subscriptions:
+        if not self.is_following(user):
             self.subscriptions.append(user)
 
     def unfollow(self, user):
-        if user in self.subscriptions:
+        if self.is_following(user):
             self.subscriptions.remove(user)
+
+    def is_following(self, user):
+        return user in self.subscriptions
 
     def subscription_posts(self):
         subscription_posts = Post.query.join(
