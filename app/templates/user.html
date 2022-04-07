@@ -2,21 +2,42 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-7">
+    <div class="col-12">
         <div class="card border-0">
             <div class="row no-gutters">
-                <div class="col-md-4">
-                    <img class="card-img" src="{{ url_for('avatars', filename=current_user.image) if current_user.image
-                    else current_user.default_avatar() }}" >
+                <div class="col-md-2">
+                    <img class="card-img" src="{{ url_for('avatars', filename=user.image) if user.image
+                    else user.default_avatar() }}" >
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-4">
                     <div class="card-body">
                         <h1 class="card-title">{{ user.username }}</h1>
                         {% if user.about_me %}<p class="card-text">{{ user.about_me }}</p>{% endif %}
                         {% if user.last_seen %}<p class="card-text"><small class="text-muted">Last seen on: {{ user.last_seen }}</small></p>{% endif %}
-                        {% if user == current_user %}
                         <br>
+                        {% if user == current_user %}
                         <a class="btn btn-info btn-sm" href="{{ url_for('edit_profile') }}" role="button">Edit your profile</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card-body">
+                        {% if not user==current_user %}
+                        {% if not current_user.is_following(user) %}
+                        <form action="{{ url_for('follow', username=user.username) }}" method="post">
+                            {{ form.hidden_tag() }}
+                            <label for="follow" class="btn btn-info btn btn-block">Follow</label>
+                            {{ form.submit(id="follow", style="display:none") }}
+                        </form>
+                        {% else %}
+                        <form action="{{ url_for('unfollow', username=user.username) }}" method="post">
+                            {{ form.hidden_tag() }}
+                            <label for="unfollow" class="btn btn-outline-info btn btn-block">Unfollow</label>
+                            {{ form.submit(id="unfollow", style="display:none") }}
+                        </form>
+                        {% endif %}
                         {% endif %}
                     </div>
                 </div>
@@ -34,20 +55,23 @@
             <div class="row no-gutters w-75">
                 <div class="col-md-1">
                     <div class="embed-responsive embed-responsive-1by1 text-center">
-                        <div class="embed-responsive-item "><img class="img-fluid" src="{{ url_for('avatars', filename=current_user.image) if current_user.image
-                        else current_user.default_avatar() }}"></div>
+                        <div class="embed-responsive-item "><img class="img-fluid" src="{{ url_for('avatars', filename=user.image) if user.image
+                        else user.default_avatar() }}"></div>
                     </div>
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <small class="font-weight-light">{{ post.timestamp }}</small>
-                        <h5 class="card-title"><a href="#" class="link text-decoration-none">{{ post.author.username }}</a> says:</h5>
+                        <small class="text-muted">{{ post.timestamp }}</small>
+                        <h5 class="card-title"><a href="{{ url_for('user', username=post.author.username) }}" class="link text-decoration-none">{{ post.author.username }}</a> says:</h5>
                     </div>
                 </div>
             </div>
             <div class="row no-gutters">
                 <div class="col-md-8">
                     <div class="card-body">
+                        {% if post.title %}
+                        <h6 class="card-title">{{ post.title }}</h6>
+                        {% endif %}
                         <p>{{ post.body }}</p>
                     </div>
                 </div>

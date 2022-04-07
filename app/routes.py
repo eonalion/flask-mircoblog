@@ -7,7 +7,7 @@ from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, ImageForm, EditProfileForm
+from app.forms import LoginForm, RegistrationForm, ImageForm, EditProfileForm, FollowForm
 from app.models import User
 
 from datetime import datetime
@@ -17,18 +17,7 @@ from datetime import datetime
 @app.route('/index')
 @login_required
 def index():
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ut accumsan eros, venenatis luctus urna. Nam pretium nunc nisi, sit amet consectetur lorem facilisis in. Nunc ligula ipsum, ornare et eleifend at, rhoncus eget libero. Etiam tempor massa sed odio sodales cursus. Proin ultrices mauris convallis, dignissim purus vitae, posuere quam.',
-            'timestamp': '12 Aug 18:30'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!',
-            'timestamp': '29 March 21:00'
-        }
-    ]
+    posts = current_user.subscription_posts().all()
 
     return render_template('index.html', title='Home', posts=posts)
 
@@ -83,12 +72,11 @@ def register():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
-    ]
+    posts = user.posts
 
-    return render_template('user.html', user=user, posts=posts)
+    form = FollowForm()
+
+    return render_template('user.html', user=user, posts=posts, form=form)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -122,6 +110,46 @@ def upload():
         db.session.commit()
 
     return redirect(url_for('edit_profile'))
+
+
+@app.route('/follow/<username>', methods=['POST'])
+@login_required
+def follow(username):
+    form = FollowForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            flash(f'User {username} not found.')
+            return redirect(url_for('index'))
+        if user == current_user:
+            flash('You cannot follow yourself!')
+            return redirect(url_for('user', username=username))
+        current_user.follow(user)
+        db.session.commit()
+        flash(f'You are following {username}!')
+        return redirect(url_for('user', username=username))
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route('/unfollow/<username>', methods=['POST'])
+@login_required
+def unfollow(username):
+    form = FollowForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            flash(f'User {username} not found.')
+            return redirect(url_for('index'))
+        if user == current_user:
+            flash('You cannot unfollow yourself!')
+            return redirect(url_for('user', username=username))
+        current_user.unfollow(user)
+        db.session.commit()
+        flash(f'You are not following {username}.')
+        return redirect(url_for('user', username=username))
+    else:
+        return redirect(url_for('index'))
 
 
 @app.route('/avatars/<filename>')

@@ -8,7 +8,7 @@
         <p class="lead">Check out posts from people you follow</p>
         <br>
         <p class="lead">
-            <a class="btn btn-info btn-lg" href="#">Write new post</a>
+            <a class="btn btn-info btn" href="#">Write new post</a>
         </p>
     </div>
 </div>
@@ -33,21 +33,24 @@
                 <div class="col-md-1 align-items-center d-flex">
                     <div class="embed-responsive embed-responsive-1by1">
                         <div class="embed-responsive-item">
-                            <img class="img-fluid" src="{{ url_for('avatars', filename=current_user.image) if current_user.image
-                            else current_user.default_avatar() }}">
+                            <img class="img-fluid" src="{{ url_for('avatars', filename=post.author.image) if post.author.image
+                            else post.author.default_avatar() }}">
                         </div>
                     </div>
                 </div>
                 <div class="col-md-8">
                     <div class="card-body" >
-                        <small class="font-weight-light">{{ post.timestamp }}</small>
-                        <h5 class="card-title"><a href="#" class="link text-decoration-none">{{ post.author.username }}</a> says:</h5>
+                        <small class="text-muted">{{ post.timestamp }}</small>
+                        <h5 class="card-title"><a href="{{ url_for('user', username=post.author.username) }}" class="link text-decoration-none">{{ post.author.username }}</a> says:</h5>
                     </div>
                 </div>
             </div>
             <div class="row no-gutters">
                 <div class="col-md-8">
                     <div class="card-body">
+                        {% if post.title %}
+                        <h6 class="card-title">{{ post.title }}</h6>
+                        {% endif %}
                         <p>{{ post.body }}</p>
                     </div>
                 </div>
