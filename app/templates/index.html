@@ -1,8 +1,68 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hi, {{ current_user.username }}!</h1>
-    {% for post in posts %}
-    <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
-    {% endfor %}
+
+{% if form %}
+<div class="jumbotron jumbotron-fluid" style="padding: 2rem 2rem">
+    <div class="container">
+        <h1 class="display-4">Hi, {{ current_user.username }}!</h1>
+        <p class="lead">Any thoughts to share with the world?</p>
+        <br>
+            <form action="" method="post">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <small class="text-muted">{{ form.title.label }}</small>
+                    {{ form.title(size=64, class="form-control") }}
+                </div>
+                <div class="form-group">
+                    <small class="text-muted">{{ form.body.label }}</small>
+                    {{ form.body(class="form-control", rows=4) }}
+                    {% for error in form.body.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    <label for="post" class="btn btn-info">Write new post</label>
+                    {{ form.submit(id="post", style="display:none") }}
+                </div>
+            </form>
+
+    </div>
+</div>
+
+{% else %}
+
+<div class="jumbotron jumbotron-fluid" style="padding: 2rem 2rem">
+    <div class="container">
+        <h1 class="display-4">Our Community</h1>
+        <p class="lead">Discover what people from all around the world are thinking about</p>
+    </div>
+</div>
+
+<br>
+
+<div class="row">
+    <div class="col-12">
+        <nav class="navbar navbar-light">
+            <form class="form-inline ml-auto">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </nav>
+    </div>
+</div>
+
+<hr class="mt-1">
+{% endif %}
+
+{% for post in posts.items %}
+    {% include '_post.html' %}
+{% endfor%}
+
+<br>
+{% include '_post_pagination.html' %}
+<br>
+
 {% endblock %}

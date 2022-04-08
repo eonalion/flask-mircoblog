@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Edit Profile</h1>
+
+<div class="row top30">
+    <div class="col-4">
+        <div class="card border-0 w-auto" >
+            <img src="{{ url_for('avatars', filename=current_user.image) if current_user.image
+            else current_user.default_avatar() }}" >
+            <div class="card-body">
+                <form action="{{ url_for('upload', username=current_user.username) }}" method="POST" enctype="multipart/form-data">
+                    {{ image_form.hidden_tag() }}
+                    <label for="img" class="btn btn-light btn-sm btn-block">Choose new image</label>
+                    {{ image_form.image(id="img", style="display:none") }}
+                    <label for="img-save" class="btn btn-info btn-sm btn-block">Apply</label>
+                    {{ image_form.submit(id="img-save", style="display:none") }}
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-1"></div>
+
+    <div class="col-6">
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.username.label }}
+                {{ form.username(size=32, class="form-control") }}
+            </div>
+            <div class="form-group">
+                {% for error in form.username.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                {{ form.about_me.label }}
+                {{ form.about_me(cols=50, rows=4, class="form-control") }}
+                <small class="form-text text-muted">Share some interesting facts about yourself.</small>
+                {% for error in form.about_me.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                <label for="save-info" class="btn btn-info ">Save profile info</label>
+                {{ form.submit(id="save-info", style="display:none") }}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
