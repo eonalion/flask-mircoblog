@@ -16,7 +16,7 @@
                 </div>
                 <div class="form-group">
                     <small class="text-muted">{{ form.body.label }}</small>
-                    {{ form.body(class="form-control", cols=26, rows=4) }}
+                    {{ form.body(class="form-control", rows=4) }}
                     {% for error in form.body.errors %}
                     <div class="alert alert-danger" role="alert">
                         {{ error }}

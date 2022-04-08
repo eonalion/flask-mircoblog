@@ -1,3 +1,4 @@
+from flask_login import current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, FileField, TextAreaField
@@ -35,7 +36,7 @@ class RegistrationForm(FlaskForm):
 class ImageForm(FlaskForm):
     image = FileField('Image', validators=[
         FileRequired(),
-        FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')
+        FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'Images only!')
     ])
 
     submit = SubmitField('Save')
@@ -48,16 +49,16 @@ class EditProfileForm(FlaskForm):
 
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
-        if user is not None:
+        if (not user == current_user) and user is not None:
             raise ValidationError('This username already exists.')
 
 
-class FollowForm(FlaskForm):
+class EmptyForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
 class PostForm(FlaskForm):
     title = StringField('You can add a title to your post', validators=[Length(min=0, max=64)])
     body = TextAreaField('Write something interesting', validators=[
-        DataRequired(), Length(min=1, max=140)])
+        DataRequired(), Length(min=1, max=600)])
     submit = SubmitField('Submit')

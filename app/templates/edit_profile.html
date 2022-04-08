@@ -22,15 +22,6 @@
     <div class="col-1"></div>
 
     <div class="col-6">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-success" role="alert">
-                    {{ message }}
-                </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
         <form action="" method="post">
             {{ form.hidden_tag() }}
 

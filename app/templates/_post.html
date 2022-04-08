@@ -3,8 +3,8 @@
         <div class="card border-0">
             <div class="row no-gutters w-75">
                 <div class="col-md-1 align-items-center d-flex">
-                    <div class="embed-responsive embed-responsive-1by1 text-center">
-                        <div class="embed-responsive-item ">
+                    <div class="embed-responsive embed-responsive-1by1">
+                        <div class="embed-responsive-item align-items-center d-flex">
                             <img class="img-fluid" src="{{ url_for('avatars', filename=post.author.image) if post.author.image
                             else post.author.default_avatar() }}"></div>
                     </div>
@@ -25,6 +25,15 @@
                         <p>{{ post.body }}</p>
                     </div>
                 </div>
+                {% if delete_form and (post.author == current_user) %}
+                <div class="col-md-1 ml-auto">
+                    <form action="{{ url_for('delete_post', post_id=post.id) }}" method="post">
+                        {{ delete_form.hidden_tag() }}
+                        <label for="delete" class="btn btn-outline-danger btn-sm ">Delete</label>
+                        {{ delete_form.submit(id="delete", style="display:none") }}
+                    </form>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

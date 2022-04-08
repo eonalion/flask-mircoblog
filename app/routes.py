@@ -7,7 +7,7 @@ from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, ImageForm, EditProfileForm, FollowForm, PostForm
+from app.forms import LoginForm, RegistrationForm, ImageForm, EditProfileForm, EmptyForm, PostForm
 from app.models import User, Post
 
 from datetime import datetime
@@ -82,9 +82,10 @@ def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = user.posts
 
-    form = FollowForm()
+    follow_form = EmptyForm()
+    delete_post_form = EmptyForm()
 
-    return render_template('user.html', user=user, posts=posts, form=form)
+    return render_template('user.html', user=user, posts=posts, form=follow_form, delete_form=delete_post_form)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -123,7 +124,8 @@ def upload():
 @app.route('/follow/<username>', methods=['POST'])
 @login_required
 def follow(username):
-    form = FollowForm()
+    form = EmptyForm()
+
     if form.validate_on_submit():
         user = User.query.filter_by(username=username).first()
         if user is None:
@@ -140,10 +142,25 @@ def follow(username):
         return redirect(url_for('index'))
 
 
+@app.route('/delete_post/<int:post_id>', methods=['POST'])
+@login_required
+def delete_post(post_id):
+    form = EmptyForm()
+
+    if form.validate_on_submit():
+        post = Post.query.filter_by(id=post_id).first()
+        db.session.delete(post)
+        db.session.commit()
+        flash('Your post was removed')
+
+    return redirect(url_for('user', username=current_user.username))
+
+
 @app.route('/unfollow/<username>', methods=['POST'])
 @login_required
 def unfollow(username):
-    form = FollowForm()
+    form = EmptyForm()
+
     if form.validate_on_submit():
         user = User.query.filter_by(username=username).first()
         if user is None:
@@ -164,6 +181,7 @@ def unfollow(username):
 @login_required
 def explore():
     posts = Post.query.order_by(Post.timestamp.desc()).all()
+
     return render_template('index.html', title='Explore', posts=posts)
 
 
