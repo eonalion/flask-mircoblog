@@ -57,8 +57,12 @@
 <hr class="mt-1">
 {% endif %}
 
-{% for post in posts %}
+{% for post in posts.items %}
     {% include '_post.html' %}
 {% endfor%}
+
+<br>
+{% include '_post_pagination.html' %}
+<br>
 
 {% endblock %}

@@ -9,3 +9,4 @@ class Config(object):
                               'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     AVATAR_UPLOAD_DIR = os.path.join(basedir, os.environ.get('UPLOAD_FOLDER') or 'uploads')
+    POSTS_PER_PAGE = 6

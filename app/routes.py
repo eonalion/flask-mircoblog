@@ -17,8 +17,10 @@ from datetime import datetime
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    posts = current_user.subscription_posts().all()
     form = PostForm()
+    page = request.args.get('page', 1, type=int)
+    posts = current_user.subscription_posts().paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
 
     if form.validate_on_submit():
         post = Post(title=form.title.data, body=form.body.data, author=current_user)
@@ -27,7 +29,7 @@ def index():
         flash('Your post is now live!')
         return redirect(url_for('index'))
 
-    return render_template('index.html', title='Home', posts=posts, form=form)
+    return render_template('index.html', title='Home', posts=posts, form=form, route='index')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -80,12 +82,17 @@ def register():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    posts = user.posts
+
+    page = request.args.get('page', 1, type=int)
+    posts = user.posts.order_by(Post.timestamp.desc()).paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
 
     follow_form = EmptyForm()
     delete_post_form = EmptyForm()
 
-    return render_template('user.html', user=user, posts=posts, form=follow_form, delete_form=delete_post_form)
+    return render_template('user.html', user=user, posts=posts,
+                           form=follow_form, delete_form=delete_post_form,
+                           route='user')
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -180,9 +187,12 @@ def unfollow(username):
 @app.route('/explore')
 @login_required
 def explore():
-    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    # posts = Post.query.order_by(Post.timestamp.desc()).all()/
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
 
-    return render_template('index.html', title='Explore', posts=posts)
+    return render_template('index.html', title='Explore', posts=posts, route='explore')
 
 
 @app.route('/avatars/<filename>')

@@ -1,0 +1,15 @@
+<div>
+    <a class="btn btn-outline-info btn-sm {% if posts.page == 1 %}disabled{% endif %}"
+       href="{{ url_for(route, page=posts.prev_num, username=username) }}">&laquo;</a>
+
+        {% for page_num in posts.iter_pages() %}
+        {% if posts.page == page_num %}
+        <a class="btn btn-info btn-sm" href="{{ url_for(route, page=page_num, username=username) }}">{{ page_num }}</a>
+        {% else %}
+        <a class="btn btn-outline-info btn-sm" href="{{ url_for(route, page=page_num, username=username) }}">{{ page_num }}</a>
+        {% endif %}
+        {% endfor %}
+
+    <a class="btn btn-outline-info btn-sm {% if posts.page == posts.pages %}disabled{% endif %}"
+       href="{{ url_for(route, page=posts.next_num, username=username) }}">&raquo;</a>
+</div>
