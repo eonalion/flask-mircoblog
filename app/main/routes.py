@@ -1,11 +1,11 @@
 import os
 
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, current_app
 from flask import send_from_directory
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 
-from app import app, db
+from app import db
 from app.main import bp
 from app.main.forms import ImageForm, EditProfileForm, EmptyForm, PostForm
 from app.models import User, Post
@@ -20,7 +20,7 @@ def index():
     form = PostForm()
     page = request.args.get('page', 1, type=int)
     posts = current_user.subscription_posts().paginate(
-        page, app.config['POSTS_PER_PAGE'], False)
+        page, current_app.config['POSTS_PER_PAGE'], False)
 
     if form.validate_on_submit():
         post = Post(title=form.title.data, body=form.body.data, author=current_user)
@@ -39,7 +39,7 @@ def user(username):
 
     page = request.args.get('page', 1, type=int)
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(
-        page, app.config['POSTS_PER_PAGE'], False)
+        page, current_app.config['POSTS_PER_PAGE'], False)
 
     follow_form = EmptyForm()
     delete_post_form = EmptyForm()
@@ -75,7 +75,7 @@ def upload():
     if form.validate_on_submit():
         f = form.image.data
         filename = secure_filename(f.filename)
-        f.save(os.path.join(app.config['AVATAR_UPLOAD_DIR'], filename))
+        f.save(os.path.join(current_app.config['AVATAR_UPLOAD_DIR'], filename))
         current_user.image = filename
         db.session.commit()
 
@@ -144,7 +144,7 @@ def explore():
     # posts = Post.query.order_by(Post.timestamp.desc()).all()/
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
-        page, app.config['POSTS_PER_PAGE'], False)
+        page, current_app.config['POSTS_PER_PAGE'], False)
 
     return render_template('index.html', title='Explore', posts=posts, route='main.explore')
 
@@ -152,7 +152,7 @@ def explore():
 @bp.route('/avatars/<filename>')
 @login_required
 def avatars(filename):
-    return send_from_directory(app.config['AVATAR_UPLOAD_DIR'], filename)
+    return send_from_directory(current_app.config['AVATAR_UPLOAD_DIR'], filename)
 
 
 @bp.before_request

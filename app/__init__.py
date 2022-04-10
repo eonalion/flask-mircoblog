@@ -5,19 +5,35 @@ from flask_sqlalchemy import SQLAlchemy
 
 from config import Config
 
-app = Flask(__name__)
-app.config.from_object(Config)
-
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-login = LoginManager(app)
+db = SQLAlchemy()
+migrate = Migrate()
+login = LoginManager()
 login.login_view = 'auth.login'
 
-from app.errors import bp as errors_bp
-app.register_blueprint(errors_bp)
 
-from app.auth import bp as auth_bp
-app.register_blueprint(auth_bp, url_prefix='/auth')
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
-from app.main import bp as main_bp
-app.register_blueprint(main_bp)
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login.init_app(app)
+    # mail.init_app(app)
+    # bootstrap.init_app(app)
+    # moment.init_app(app)
+    # babel.init_app(app)
+
+    from app.errors import bp as errors_bp
+    app.register_blueprint(errors_bp)
+
+    from app.auth import bp as auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+
+    from app.main import bp as main_bp
+    app.register_blueprint(main_bp)
+
+    if not app.debug and not app.testing:
+        # TODO: logger setup
+        pass
+
+    return app
