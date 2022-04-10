@@ -6,10 +6,10 @@
 <div class="row top30">
     <div class="col-4">
         <div class="card border-0 w-auto" >
-            <img src="{{ url_for('avatars', filename=current_user.image) if current_user.image
+            <img src="{{ url_for('main.avatars', filename=current_user.image) if current_user.image
             else current_user.default_avatar() }}" >
             <div class="card-body">
-                <form action="{{ url_for('upload', username=current_user.username) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ url_for('main.upload', username=current_user.username) }}" method="POST" enctype="multipart/form-data">
                     {{ image_form.hidden_tag() }}
                     <label for="img" class="btn btn-light btn-sm btn-block">Choose new image</label>
                     {{ image_form.image(id="img", style="display:none") }}
