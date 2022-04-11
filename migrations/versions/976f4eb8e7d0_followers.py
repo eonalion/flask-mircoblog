@@ -21,8 +21,8 @@ def upgrade():
     op.create_table('followers',
     sa.Column('follower_id', sa.Integer(), nullable=False),
     sa.Column('subscription_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['follower_id'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['subscription_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['follower_id'], ['user_account.id'], ),
+    sa.ForeignKeyConstraint(['subscription_id'], ['user_account.id'], ),
     sa.PrimaryKeyConstraint('follower_id', 'subscription_id')
     )
     # ### end Alembic commands ###
