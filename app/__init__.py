@@ -3,7 +3,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-from config import Config
+from config import DevelopmentConfig
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -11,7 +11,7 @@ login = LoginManager()
 login.login_view = 'auth.login'
 
 
-def create_app(config_class=Config):
+def create_app(config_class=DevelopmentConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
 

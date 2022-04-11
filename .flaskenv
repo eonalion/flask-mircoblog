@@ -1,2 +1,3 @@
 FLASK_APP=microblog.py
-UPLOAD_FOLDER = 'avatars'
+FLASK_DEBUG=1
+FLASK_ENV=development
