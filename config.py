@@ -1,6 +1,10 @@
 import os
 
+from dotenv import load_dotenv
+
 basedir = os.path.abspath(os.path.dirname(__file__))
+# Explicitly load .env file in case of running app without 'flask' command (automatically loads .env)
+load_dotenv(os.path.join(basedir, '.env'))
 
 
 class Config(object):
