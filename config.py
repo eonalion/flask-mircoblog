@@ -18,3 +18,7 @@ class Config(object):
 class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', '').replace(
         'postgres://', 'postgresql://', 1)
+
+    cloud_name = os.environ.get('CLOUD_NAME')
+    api_key = os.environ.get('API_KEY')
+    api_secret = os.getenv('API_SECRET')

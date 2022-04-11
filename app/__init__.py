@@ -3,6 +3,9 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
+import cloudinary
+import cloudinary.uploader
+
 from config import DevelopmentConfig
 
 db = SQLAlchemy()
@@ -22,6 +25,10 @@ def create_app(config_class=DevelopmentConfig):
     # bootstrap.init_app(app)
     # moment.init_app(app)
     # babel.init_app(app)
+
+    cloudinary.config(cloud_name=config_class.cloud_name,
+                      api_key=config_class.api_key,
+                      api_secret=config_class.api_secret)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)

@@ -1,4 +1,7 @@
-import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+from cloudinary.utils import cloudinary_url
 
 from flask import render_template, flash, redirect, url_for, request, current_app
 from flask import send_from_directory
@@ -72,11 +75,28 @@ def edit_profile():
 @login_required
 def upload():
     form = ImageForm()
+
     if form.validate_on_submit():
         f = form.image.data
-        filename = secure_filename(f.filename)
-        f.save(os.path.join(current_app.config['AVATAR_UPLOAD_DIR'], filename))
-        current_user.image = filename
+
+        upload_result = cloudinary.uploader.upload(f, folder="avatars",
+                                                   quality="auto",
+                                                   transformation=[
+                                                       {'if': "ar_eq_1"},
+                                                       {'width': 400, 'height': 400, 'crop': "fill"},
+                                                       {'if': "end"},
+                                                       {'if': "ar_gt_1:1"},
+                                                       {'width': 400, 'height': 300, 'crop': "fill"},
+                                                       {'if': "end"},
+                                                       {'if': "ar_lt_1:1"},
+                                                       {'width': 300, 'height': 400, 'crop': "fill"},
+                                                       {'if': "end"}
+                                                   ]
+                                                   )
+
+        (image_url, options) = cloudinary_url(upload_result['public_id'])
+        current_user.image = image_url
+        current_app.logger.info(image_url)
         db.session.commit()
 
     return redirect(url_for('main.edit_profile'))
@@ -149,10 +169,10 @@ def explore():
     return render_template('index.html', title='Explore', posts=posts, route='main.explore')
 
 
-@bp.route('/avatars/<filename>')
-@login_required
-def avatars(filename):
-    return send_from_directory(current_app.config['AVATAR_UPLOAD_DIR'], filename)
+# @bp.route('/avatars/<filename>')
+# @login_required
+# def avatars(filename):
+#     return send_from_directory(current_app.config['AVATAR_UPLOAD_DIR'], filename)
 
 
 @bp.before_request

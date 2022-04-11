@@ -5,12 +5,11 @@
     <div class="col-12">
         <div class="card border-0">
             <div class="row no-gutters">
-                <div class="col-md-2">
-                    <img class="card-img" src="{{ url_for('main.avatars', filename=user.image) if user.image
+                <div class="col-md-3 align-items-center d-flex">
+                    <img class="card-img" src="{{ user.image if user.image
                     else user.default_avatar() }}" >
                 </div>
-                <div class="col-md-1">
-                </div>
+                <div class="col-md-1"></div>
                 <div class="col-md-4">
                     <div class="card-body">
                         <h1 class="card-title">{{ user.username }}</h1>

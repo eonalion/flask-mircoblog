@@ -6,7 +6,7 @@
 <div class="row top30">
     <div class="col-4">
         <div class="card border-0 w-auto" >
-            <img src="{{ url_for('main.avatars', filename=current_user.image) if current_user.image
+            <img src="{{ current_user.image if current_user.image
             else current_user.default_avatar() }}" >
             <div class="card-body">
                 <form action="{{ url_for('main.upload', username=current_user.username) }}" method="POST" enctype="multipart/form-data">
